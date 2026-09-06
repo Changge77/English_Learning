@@ -1,5 +1,47 @@
 # English Learning Web — Design Guideline
 
+## Approved implementation baseline — September 2026
+
+This section records the user's latest approved decisions and supersedes conflicting requirements in the original design snapshot below.
+
+- **Hosting:** GitHub Pages. Static React/TypeScript application; no runtime backend, accounts, API keys, microphone access, speech recognition, transcription or pronunciation scoring.
+- **Bilingual interface:** Navigation, headings, actions, explanations, feedback, settings and error messages are English and Chinese together. Target English content can use a Chinese reveal control in recall tasks. Diphthongs is 双元音; vowels is 元音.
+- **Audio:** US English is the main playback accent. UK audio and IPA are available in Words. Audio and fonts are packaged with the site; learners do not need a speech-service subscription. Slow playback is available.
+- **Learning:** Unit 1 is the complete prototype. Units 2–6 remain visibly labelled Coming Later · 敬请期待. Shared components support later content expansion.
+- **Speaking:** Listen and repeat aloud, without recording or assessment. Completion never claims pronunciation accuracy.
+- **Vocabulary:** Cover printed pp. 86–92, including proper nouns and play vocabulary. Consolidate the repeated alphabetical list and expand parenthetical forms into searchable entries. Each entry includes Chinese meaning, US/UK broad IPA, both audio variants, an original bilingual example, and review state.
+- **Phonetics:** A General American core with explicit British comparisons. Explain letter vs. sound and IPA. Use example-word audio, schematic mouth-opening diagrams and written tongue/lip instructions. Sound practice is participation, not a speech score.
+- **Review:** Use exercise results and explicit flashcard self-checks. Mastery requires successful recall across different days. Errors return words to review. No fake scores or generated claims of speech quality.
+- **Progress:** Save on the current browser/device, with validated JSON export/import and confirmation before replacement or reset. No automatic cross-device synchronization.
+- **Visual design:** English Garden · 英语花园. Calm green, cream and warm accents; original garden illustration; readable bilingual labels; responsive desktop/tablet/mobile layouts; keyboard and reduced-motion support.
+
+### Current site map
+
+| Section | Contents |
+|---|---|
+| Home · 首页 | Continue learning · 继续学习; today's plan · 今日计划; review · 复习; rewards · 奖励 |
+| Learn · 课程 | Greetings; friendship vocabulary; self-introductions; friends/listening; repeat aloud; kite story; alphabet; kindness; friend postcard; Unit 1 review |
+| Words · 单词 | All vocabulary; English/Chinese search; unit and learning-state filters; details; US/UK IPA and audio; examples; review list |
+| Phonetic · 音标 | Letters vs. sounds; vowels · 元音; diphthongs · 双元音; consonants · 辅音; UK comparison · 英音对照; sound practice |
+| Practice · 练习 | Listening; picture matching; spelling; sentence ordering; reading; sound discrimination; flashcards; mixed review |
+| Progress · 学习进度 | Completed lessons; vocabulary mastery; sound participation; exercise history; learning days; stars and badges |
+| Settings · 设置 | Slow playback; Chinese learning hints; export/import; postcard; confirmed reset |
+
+### Core verification requirements
+
+1. Check every content reference and required audio file.
+2. Verify actual lesson navigation, answer feedback and completion.
+3. Verify page refresh restores progress, backups round-trip, and invalid imports preserve existing records.
+4. Verify US/UK playback, listening-question gating and failure feedback.
+5. Verify desktop/mobile navigation and layouts, including Pages project URLs and direct hash routes.
+6. Deploy only the build output; preserve source inputs.
+
+The original guideline is retained below as historical design context. Its automated speech-evaluation requirements and related score-based rewards are deferred.
+
+---
+
+## Original design snapshot (historical)
+
 **Project:** Personal English Self-Learning Website  
 **Primary learner:** Grade 3 student  
 **Curriculum basis:** 《义务教育教科书 英语 三年级上册（根据2022年版课程标准修订）》, 外语教学与研究出版社  

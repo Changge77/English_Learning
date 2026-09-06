@@ -283,11 +283,86 @@ wake up|醒来|weɪk ʌp||Wake up, Sam!|醒醒，萨姆！
 sorry|对不起|ˈsɑːri|ˈsɒri|I am sorry.|对不起。
 again|再一次|əˈɡen||Let's read again.|让我们再读一次。
 `;
-let unit=0;
-export const words=rows.trim().split('\n').filter(Boolean).flatMap(line=>{
-  if(line[0]==='#'){unit=Number(line.slice(1));return [];}
-  const [text,zh,us,uk,example,exampleZh]=line.split('|');
-  return [{id:`w${unit}-${text.toLowerCase().replace(/[^a-z0-9]+/g,'-')}`,text,zh,us,uk:uk||us,example,exampleZh,unit,page:unit<=1?86:unit===2?87:unit===3?87:unit===4?88:unit<=6?88:92}];
-});
-export const groupNames=['Welcome · 入门','Unit 1 · 朋友','Unit 2 · 学习用品','Unit 3 · 色彩','Unit 4 · 数字','Unit 5 · 家人','Unit 6 · 家','Names & places · 专有名词','Plays · 短剧词汇'];
-export const emojiMap={friend:'🤝',hello:'👋',happy:'😊',nine:'9',play:'🪁',help:'🙌',book:'📖',school:'🏫',pen:'🖊️',pencil:'✏️',bag:'🎒',ruler:'📏',eraser:'▰',red:'🔴',blue:'🔵',green:'🟢',yellow:'🟡',purple:'🟣',orange:'🟠',pink:'🌸',black:'⚫',rainbow:'🌈',apple:'🍎',cat:'🐈',dog:'🐕',bird:'🐦',family:'👨‍👩‍👧',home:'🏠',sun:'☀️',ball:'⚽',egg:'🥚',umbrella:'☂️',schoolbag:'🎒',butterfly:'🦋'};
+let unit = 0;
+export const words = rows
+  .trim()
+  .split("\n")
+  .filter(Boolean)
+  .flatMap((line) => {
+    if (line[0] === "#") {
+      unit = Number(line.slice(1));
+      return [];
+    }
+    const [text, zh, us, uk, example, exampleZh] = line.split("|");
+    return [
+      {
+        id: `w${unit}-${text.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`,
+        text,
+        zh,
+        us,
+        uk: uk || us,
+        example,
+        exampleZh,
+        unit,
+        page:
+          unit <= 1
+            ? 86
+            : unit === 2
+              ? 87
+              : unit === 3
+                ? 87
+                : unit === 4
+                  ? 88
+                  : unit <= 6
+                    ? 88
+                    : 92,
+      },
+    ];
+  });
+export const groupNames = [
+  "Welcome · 入门",
+  "Unit 1 · 朋友",
+  "Unit 2 · 学习用品",
+  "Unit 3 · 色彩",
+  "Unit 4 · 数字",
+  "Unit 5 · 家人",
+  "Unit 6 · 家",
+  "Names & places · 专有名词",
+  "Plays · 短剧词汇",
+];
+export const emojiMap = {
+  friend: "🤝",
+  hello: "👋",
+  happy: "😊",
+  nine: "9",
+  play: "🪁",
+  help: "🙌",
+  book: "📖",
+  school: "🏫",
+  pen: "🖊️",
+  pencil: "✏️",
+  bag: "🎒",
+  ruler: "📏",
+  eraser: "▰",
+  red: "🔴",
+  blue: "🔵",
+  green: "🟢",
+  yellow: "🟡",
+  purple: "🟣",
+  orange: "🟠",
+  pink: "🌸",
+  black: "⚫",
+  rainbow: "🌈",
+  apple: "🍎",
+  cat: "🐈",
+  dog: "🐕",
+  bird: "🐦",
+  family: "👨‍👩‍👧",
+  home: "🏠",
+  sun: "☀️",
+  ball: "⚽",
+  egg: "🥚",
+  umbrella: "☂️",
+  schoolbag: "🎒",
+  butterfly: "🦋",
+};

@@ -1,5 +1,5 @@
 // A practical General American core, plus explicitly labelled British comparisons.
-const raw=`
+const raw = `
 iː|Vowels|元音|see|green|Smile gently; keep your tongue high and forward.|嘴角轻轻展开，舌位高而靠前。|1
 ɪ|Vowels|元音|sit|six|Relax your lips; keep the sound short.|嘴唇放松，声音短促。|1
 e|Vowels|元音|pen|red|Open your mouth a little; relax the tongue.|嘴巴稍微张开，舌头放松。|2
@@ -48,5 +48,32 @@ w|Consonants|辅音|we|with|Round your lips, then open into the vowel.|先拢圆
 eə|UK comparison|英音对照|chair|share|Glide from /e/ toward a relaxed centre.|从 /e/ 滑向放松的中央元音。|2
 ʊə|UK comparison|英音对照|pure|tour|A traditional UK glide; modern speakers may use other vowels.|传统英音的滑动音，现代说话者可能使用其他元音。|1
 `;
-export const sounds=raw.trim().split('\n').map((line,i)=>{const [ipa,group,groupZh,example,other,tip,tipZh,open]=line.split('|');return {id:`s${i}`,ipa,group,groupZh,example,other,tip,tipZh,open:Number(open),accent:group==='UK comparison'?'uk':'us'};});
-export const soundQuestions=[['she','see'],['three','tree'],['ship','sheep'],['cat','cut'],['pen','pan'],['very','berry'],['rice','lice'],['thin','fin']];
+export const sounds = raw
+  .trim()
+  .split("\n")
+  .map((line, i) => {
+    const [ipa, group, groupZh, example, other, tip, tipZh, open] =
+      line.split("|");
+    return {
+      id: `s${i}`,
+      ipa,
+      group,
+      groupZh,
+      example,
+      other,
+      tip,
+      tipZh,
+      open: Number(open),
+      accent: group === "UK comparison" ? "uk" : "us",
+    };
+  });
+export const soundQuestions = [
+  ["she", "see"],
+  ["three", "tree"],
+  ["ship", "sheep"],
+  ["cat", "cut"],
+  ["pen", "pan"],
+  ["very", "berry"],
+  ["rice", "lice"],
+  ["thin", "fin"],
+];

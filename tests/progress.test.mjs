@@ -1,13 +1,89 @@
-import test from 'node:test';
-import assert from 'node:assert/strict';
-import {freshState,answerResult,completeLesson,stars,wordStatus,validateBackup} from '../src/progress.mjs';
-import {words} from '../src/vocabulary.mjs';
-import {lessons} from '../src/curriculum.mjs';
-import {sounds} from '../src/phonetics.mjs';
-const w=words[0].id,ids=words.map(w=>w.id),ls=lessons.map(l=>l.id),ss=sounds.map(s=>s.id);
-const start=new Date(2026,8,6,12).getTime();
-test('repeat clicks cannot farm lesson rewards or same-day question stars',()=>{let s=freshState();s=completeLesson(s,'hello');s=completeLesson(s,'hello');assert.equal(stars(s),5);for(let i=0;i<5;i++)s=answerResult(s,'test',true,w,start);assert.equal(stars(s),6);assert.equal(s.wordProgress[w].level,1);assert.equal(wordStatus(s.wordProgress[w],start),'learning');});
-test('mastery requires separate days and errors immediately restore review',()=>{let s=freshState();for(let i=0;i<3;i++)s=answerResult(s,'test',true,w,start+i*86400000);assert.equal(wordStatus(s.wordProgress[w],start+2*86400000),'mastered');assert.equal(wordStatus(s.wordProgress[w],start+10*86400000),'review');s=answerResult(s,'test',false,w,start+3*86400000);assert.equal(wordStatus(s.wordProgress[w],start+3*86400000),'review');});
-test('backup round-trip preserves meaningful learning data',()=>{let s=answerResult(freshState(),'first',false,w,start);s=completeLesson(s,'hello');s.postcard.name='<img onerror=alert(1)>';assert.deepEqual(validateBackup(JSON.parse(JSON.stringify(s)),ids,ls,ss),s);});
-test('backup rejects unknown content, malformed scores, invalid settings and oversized history',()=>{for(const mutate of [s=>s.completed.push('bogus'),s=>s.wordProgress[w]={level:99,due:start,weak:false,lastSuccess:''},s=>s.settings.slow='yes',s=>s.history=new Array(2001).fill({}),s=>s.resume.step=-1,s=>s.postcard.country='javascript:bad']){const s=freshState();mutate(s);assert.throws(()=>validateBackup(s,ids,ls,ss));}});
-test('all curriculum references resolve and words have distinct IDs and both IPA variants',()=>{assert.equal(new Set(ids).size,ids.length);assert.ok(words.length>260);for(const word of words)for(const key of ['id','text','zh','us','uk','example','exampleZh'])assert.ok(word[key],`${word.id} ${key}`);for(const lesson of lessons){for(const text of lesson.wordTexts||[])assert.ok(words.find(w=>w.text===text),text);for(const q of lesson.questions){assert.ok(q.answer>=0&&q.answer<q.options.length);if(q.word)assert.ok(words.find(w=>w.text===q.word),q.word);}}assert.ok(sounds.length>40);});
+import test from "node:test";
+import assert from "node:assert/strict";
+import {
+  freshState,
+  answerResult,
+  completeLesson,
+  stars,
+  wordStatus,
+  validateBackup,
+} from "../src/progress.mjs";
+import { words } from "../src/vocabulary.mjs";
+import { lessons } from "../src/curriculum.mjs";
+import { sounds } from "../src/phonetics.mjs";
+const w = words[0].id,
+  ids = words.map((w) => w.id),
+  ls = lessons.map((l) => l.id),
+  ss = sounds.map((s) => s.id);
+const start = new Date(2026, 8, 6, 12).getTime();
+test("repeat clicks cannot farm lesson rewards or same-day question stars", () => {
+  let s = freshState();
+  s = completeLesson(s, "hello");
+  s = completeLesson(s, "hello");
+  assert.equal(stars(s), 5);
+  for (let i = 0; i < 5; i++) s = answerResult(s, "test", true, w, start);
+  assert.equal(stars(s), 6);
+  assert.equal(s.wordProgress[w].level, 1);
+  assert.equal(wordStatus(s.wordProgress[w], start), "learning");
+});
+test("mastery requires separate days and errors immediately restore review", () => {
+  let s = freshState();
+  for (let i = 0; i < 3; i++)
+    s = answerResult(s, "test", true, w, start + i * 86400000);
+  assert.equal(wordStatus(s.wordProgress[w], start + 2 * 86400000), "mastered");
+  assert.equal(wordStatus(s.wordProgress[w], start + 10 * 86400000), "review");
+  s = answerResult(s, "test", false, w, start + 3 * 86400000);
+  assert.equal(wordStatus(s.wordProgress[w], start + 3 * 86400000), "review");
+});
+test("backup round-trip preserves meaningful learning data", () => {
+  let s = answerResult(freshState(), "first", false, w, start);
+  s = completeLesson(s, "hello");
+  s.postcard.name = "<img onerror=alert(1)>";
+  assert.deepEqual(
+    validateBackup(JSON.parse(JSON.stringify(s)), ids, ls, ss),
+    s,
+  );
+});
+test("backup rejects unknown content, malformed scores, invalid settings and oversized history", () => {
+  for (const mutate of [
+    (s) => s.completed.push("bogus"),
+    (s) =>
+      (s.wordProgress[w] = {
+        level: 99,
+        due: start,
+        weak: false,
+        lastSuccess: "",
+      }),
+    (s) => (s.settings.slow = "yes"),
+    (s) => (s.history = new Array(2001).fill({})),
+    (s) => (s.resume.step = -1),
+    (s) => (s.postcard.country = "javascript:bad"),
+  ]) {
+    const s = freshState();
+    mutate(s);
+    assert.throws(() => validateBackup(s, ids, ls, ss));
+  }
+});
+test("all curriculum references resolve and words have distinct IDs and both IPA variants", () => {
+  assert.equal(new Set(ids).size, ids.length);
+  assert.ok(words.length > 260);
+  for (const word of words)
+    for (const key of ["id", "text", "zh", "us", "uk", "example", "exampleZh"])
+      assert.ok(word[key], `${word.id} ${key}`);
+  for (const lesson of lessons) {
+    for (const text of lesson.wordTexts || [])
+      assert.ok(
+        words.find((w) => w.text === text),
+        text,
+      );
+    for (const q of lesson.questions) {
+      assert.ok(q.answer >= 0 && q.answer < q.options.length);
+      if (q.word)
+        assert.ok(
+          words.find((w) => w.text === q.word),
+          q.word,
+        );
+    }
+  }
+  assert.ok(sounds.length > 40);
+});
