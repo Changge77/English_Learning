@@ -23,7 +23,7 @@ const fs = require("node:fs");
     await page.locator("main").waitFor();
   };
   await visit("");
-  assert.match(await page.title(), /English Garden/);
+  assert.equal(await page.title(), "Lingwei's English Garden 凌薇英语花园");
   await page.getByRole("button", { name: "Start Learning 开始学习" }).click();
   await page.getByRole("button", { name: "Next step · 下一步" }).click();
   await page.waitForFunction(() =>
@@ -74,6 +74,34 @@ const fs = require("node:fs");
   console.log("PASS word search, US/UK playback, review list, scored quiz");
   await visit("phonetic");
   await page
+    .getByRole("button", { name: "Hear sound · 听音标 /æ/", exact: true })
+    .click();
+  await page.waitForFunction(
+    () => !document.querySelector(".sound-lesson button.primary")?.disabled,
+  );
+  assert.ok(audioRequests.some((u) => u.includes("us_phonetics_sound_hat_")));
+  await page
+    .getByRole("button", { name: "UK comparison · 英音对照", exact: true })
+    .click();
+  assert.equal(await page.locator(".sound-heading h2").innerText(), "/ɒ/");
+  assert.equal(
+    await page.locator(".sound-heading .audio").getAttribute("aria-pressed"),
+    "false",
+  );
+  await page
+    .getByRole("button", { name: "Hear sound · 听音标 /ɒ/", exact: true })
+    .click();
+  await page.waitForFunction(
+    () => !document.querySelector(".sound-lesson button.primary")?.disabled,
+  );
+  assert.ok(audioRequests.some((u) => u.includes("uk_phonetics_sound_sock_")));
+  await page
+    .getByRole("button", { name: "All sounds · 全部", exact: true })
+    .click();
+  console.log(
+    "PASS individual US/UK sound playback and sound-switch cancellation",
+  );
+  await page
     .getByRole("button", { name: "Hear example · 听例词" })
     .first()
     .click();
@@ -103,25 +131,21 @@ const fs = require("node:fs");
   await page
     .getByRole("button", { name: "Cancel · 取消", exact: true })
     .click();
-  await page
-    .locator("input[type=file]")
-    .setInputFiles({
-      name: "bad.json",
-      mimeType: "application/json",
-      buffer: Buffer.from('{"version":99}'),
-    });
+  await page.locator("input[type=file]").setInputFiles({
+    name: "bad.json",
+    mimeType: "application/json",
+    buffer: Buffer.from('{"version":99}'),
+  });
   await page.waitForFunction(() =>
     document.querySelector(".toast")?.textContent.includes("invalid"),
   );
   await page.getByRole("button", { name: "Reset progress · 重置进度" }).click();
   await page.getByRole("button", { name: "Yes, reset · 确认重置" }).click();
-  await page
-    .locator("input[type=file]")
-    .setInputFiles({
-      name: "backup.json",
-      mimeType: "application/json",
-      buffer: Buffer.from(JSON.stringify(backup)),
-    });
+  await page.locator("input[type=file]").setInputFiles({
+    name: "backup.json",
+    mimeType: "application/json",
+    buffer: Buffer.from(JSON.stringify(backup)),
+  });
   await page
     .getByRole("button", { name: "Replace and import · 替换并导入" })
     .click();

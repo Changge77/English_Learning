@@ -1,3 +1,5 @@
+import { phoneticAudio } from "./phonetic-audio.mjs";
+
 // A practical General American core, plus explicitly labelled British comparisons.
 const raw = `
 iː|Vowels|元音|see|green|Smile gently; keep your tongue high and forward.|嘴角轻轻展开，舌位高而靠前。|1
@@ -57,6 +59,7 @@ export const sounds = raw
     return {
       id: `s${i}`,
       ipa,
+      audio: phoneticAudio[ipa],
       group,
       groupZh,
       example,

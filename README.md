@@ -1,4 +1,8 @@
-# English Garden · 英语花园
+# Lingwei's English Garden 凌薇英语花园
+
+The phonetic heading's speaker button streams individual US/UK sound recordings
+from [Cambridge Dictionary](https://dictionary.cambridge.org/help/phonetics.html)
+and requires internet access. Example-word audio remains bundled with the site.
 
 A bilingual, self-paced Grade 3 English companion designed for **GitHub Pages**. No backend, API keys, sign-in, microphone, transcription, or pronunciation assessment.
 

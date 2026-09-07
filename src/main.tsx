@@ -119,6 +119,7 @@ function stopAudio() {
 }
 function AudioButton({
   text,
+  src,
   accent = "us",
   label,
   zh,
@@ -126,6 +127,7 @@ function AudioButton({
   compact = false,
 }: {
   text: string;
+  src?: string;
   accent?: string;
   label?: string;
   zh?: string;
@@ -138,6 +140,7 @@ function AudioButton({
   const ref = useRef<HTMLAudioElement | null>(null);
   useEffect(() => {
     const stop = () => {
+      ref.current = null;
       setPlaying(false);
       setBusy(false);
     };
@@ -145,6 +148,7 @@ function AudioButton({
     return () => {
       window.removeEventListener("garden-audio-stop", stop);
       ref.current?.pause();
+      ref.current = null;
     };
   }, []);
   async function play() {
@@ -155,13 +159,14 @@ function AudioButton({
     stopAudio();
     setBusy(true);
     const a = new Audio(
-      `${import.meta.env.BASE_URL}audio/${audioId(text, accent)}.mp3`,
+      src || `${import.meta.env.BASE_URL}audio/${audioId(text, accent)}.mp3`,
     );
     ref.current = a;
     activeAudio = a;
     a.playbackRate = state.settings.slow ? 0.78 : 1;
     a.onended = () => setPlaying(false);
     a.onerror = () => {
+      if (ref.current !== a) return;
       setBusy(false);
       setPlaying(false);
       notice(
@@ -170,10 +175,12 @@ function AudioButton({
     };
     try {
       await a.play();
+      if (ref.current !== a) return;
       setBusy(false);
       setPlaying(true);
       onPlayed?.();
     } catch {
+      if (ref.current !== a) return;
       setBusy(false);
       notice(
         "Tap to retry audio. Check your connection or device volume. · 请点击重试音频，检查网络或设备音量。",
@@ -453,7 +460,7 @@ function App() {
               <Leaf size={27} />
             </span>
             <span>
-              English Garden<small>英语花园</small>
+              Lingwei's English Garden<small>凌薇英语花园</small>
             </span>
           </a>
           <div className="sidebar-label">
@@ -565,7 +572,7 @@ function App() {
               </div>
             )}
             <footer>
-              English Garden · 英语花园{" "}
+              Lingwei's English Garden 凌薇英语花园{" "}
               <span>
                 Little steps, lasting learning. · 小小进步，慢慢成长。
               </span>
@@ -1699,6 +1706,7 @@ function PhoneticPage() {
             key={g}
             className={g === group ? "selected" : ""}
             onClick={() => {
+              stopAudio();
               setGroup(g);
               const first = sounds.find((s) => g === "All" || s.group === g);
               if (first) {
@@ -1734,9 +1742,30 @@ function PhoneticPage() {
             {sound.group} · {sound.groupZh}
           </div>
           <div className="sound-title">
-            <h2>/{sound.ipa}/</h2>
+            <div className="sound-heading">
+              <h2>/{sound.ipa}/</h2>
+              <AudioButton
+                text={`/${sound.ipa}/`}
+                src={sound.audio}
+                label="Hear sound"
+                zh="听音标"
+                compact
+                onPlayed={() => setHeard(true)}
+              />
+            </div>
             <Mouth open={sound.open} />
           </div>
+          <p className="source-note">
+            Sound audio · 音标音频：{" "}
+            <a
+              href="https://dictionary.cambridge.org/help/phonetics.html"
+              target="_blank"
+              rel="noreferrer"
+            >
+              Cambridge Dictionary
+            </a>{" "}
+            · Online · 需联网
+          </p>
           <h3>Try this mouth position · 试试这个口形</h3>
           <Meaning en={sound.tip} zh={sound.tipZh} />
           <p className="source-note">
@@ -1758,8 +1787,8 @@ function PhoneticPage() {
             ))}
           </div>
           <p className="hint">
-            Hear the sound inside each word, then repeat the word aloud. ·
-            听例词中的目标音，然后大声跟读。
+            Listen to the sound, then hear it inside each word and repeat aloud.
+            · 先听音标，再听例词中的目标音，然后大声跟读。
           </p>
           <button
             className="primary"
@@ -2568,7 +2597,7 @@ function SettingsPage({ onRestore }: { onRestore: () => void }) {
       </section>
       <section className="panel settings-panel">
         <h2>
-          About this garden <span>关于英语花园</span>
+          About this garden <span>关于凌薇英语花园</span>
         </h2>
         <p>
           A self-learning companion based on the Grade 3 textbook. Original
@@ -2577,9 +2606,10 @@ function SettingsPage({ onRestore }: { onRestore: () => void }) {
         </p>
         <p>
           Phonetics uses a General American core with British comparisons;
-          examples demonstrate sounds inside words. No speech is recorded or
+          individual sound recordings are streamed from Cambridge Dictionary,
+          and examples demonstrate sounds inside words. No speech is recorded or
           assessed. ·
-          音标以通用美式发音为主并提供英音对照，通过例词示范发音。网站不录音、不评测口语。
+          音标以通用美式发音为主并提供英音对照，单独音标音频来自剑桥词典在线资源，并通过例词示范发音。网站不录音、不评测口语。
         </p>
         <p className="source-note">
           Reference: FLTRP Grade 3, first semester, revised to the 2022
